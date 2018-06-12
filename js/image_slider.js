@@ -99,10 +99,11 @@ function htmlDecode(input) {
 }
 
 function autoScroll() {
-    console.log('autoScroll items.width ' + $('#items').width() + ' slider.width ' + prefs.getInt('width'));
+    // TODO: If vertical scrollbar is shown, scroll offset will be incorrect.
+    console.log('autoScroll items.width ' + $('#items').width() + ' slider.width ' + $('#carousel').width());
     var autoScrollDuration = parseInt(prefs.getString('autoScrollDuration'));
     var scrollLeft = $('#carousel').scrollLeft();
-    var maxScrollLeft = $('#items').width() - prefs.getInt('width');
+    var maxScrollLeft = $('#items').width() - $('#carousel').width();
     var targetScrollLeft;
     if (maxScrollLeft < 0) {
         targetScrollLeft = '0px';
@@ -127,11 +128,11 @@ function nextSlide(dx, msec) {
     var newSlideScrollLeft = currentSlide * $('#carousel').width();
     console.log('nextSlide dx ' + dx + '' + slideCount + ' currentSlide ' + currentSlide + ' currentSlideScrollLeft ' + currentSlideScrollLeft + ' newSlideScrollLeft ' + newSlideScrollLeft);
     if (isiPhone()) {
-        $('#carousel').animate({ 'scrollLeft': newSlideScrollLeft }, (msec ? msec : 400));
+        $('#carousel').animate({ 'scrollLeft': newSlideScrollLeft }, (msec ? msec : DEFAULT_SLIDE_MSEC));
     } else {
         // Iterate to new scrollLeft.
         var startTime = (new Date()).getTime();
-        var duration = (msec ? msec : 400);
+        var duration = (msec ? msec : DEFAULT_SLIDE_MSEC);
         var timerInterval = 10;
         var distance = newSlideScrollLeft - currentSlideScrollLeft;
         var dx = distance / (duration / timerInterval);
@@ -186,7 +187,7 @@ function populateItems() {
         var itemImg = document.createElement('img');
         itemImg.src = baseUrl + encodeURI(content);
         $(item).append(itemImg);
-        $(itemImg).width(prefs.getInt('width'));
+        $(itemImg).width($('#carousel').width());
         $(itemImg).load(function () {
             if ($(this).height() > $('#carousel').height()) {
                 console.log('img height ' + $(this).height());
@@ -204,9 +205,9 @@ function resizeItems() {
     $('#carousel').css('scrollLeft', 0);
 
     $('#items div img').each(function () {
-        var ratio = prefs.getInt('width') / $(this).width;
+        var ratio = $('#carousel').width() / $(this).width;
         var newHeight = $(this).height() * ratio;
-        $(this).width(prefs.getInt('width'));
+        $(this).width($('#carousel').width());
         $(this).height(newHeight);
         if ($(this).height() > $('#carousel').height()) {
             $('#carousel').height($(this).height());
@@ -227,13 +228,15 @@ function setupAutoScroll() {
 
 $('#debug').html('script started.');
 
-var prefs = new Prefs(window.location.search);
-var currentSlide = 0;
-var slideCount = 0;
-var Direction = {
+const Direction = {
     LEFT: -1,
     RIGHT: 1
 };
+const DEFAULT_SLIDE_MSEC = 200;
+
+var prefs = new Prefs(window.location.search);
+var currentSlide = 0;
+var slideCount = 0;
 var startMouseX = -1;
 var startScrollLeft = 0;
 var dx;
@@ -245,12 +248,14 @@ $(function () {
         $('#debug').hide();
     }
 
-    $('#carousel-container').width(prefs.getInt('width'));
+//    $('#carousel-container').width(prefs.getInt('width'));
+    $('#carousel').width($('body').prop('clientWidth'));
     $('#carousel').show();
     populateItems();
     setupAutoScroll();
 
     $(window).on('resize', function () {
+        $('#carousel').width($('body').prop('clientWidth'));
         resizeItems();
         setupAutoScroll();
     });
