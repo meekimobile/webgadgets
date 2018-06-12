@@ -1,16 +1,16 @@
 <link rel="stylesheet" href="css/common.css">
 
-<div id="container">
+<div id="carousel-container">
     <div id="carousel" class="carousel" style="display:none;">
         <div id="items" class="items" onmousedown="mouseDown(event);" onmousemove="mouseMove(event);" onmouseup="mouseUp(event);"
             ontouchstart="touchStart(event);" ontouchmove="touchMove(event);" ontouchend="touchEnd(event);">
         </div>
     </div>
     <div class="floatlabel verticalCenter" style="left:0px;">
-        <img id="back_button" src="https://raw.githubusercontent.com/meekimobile/webgadgets/master/images/back_ios_48.png" onclick="nextSlide(Direction.LEFT);setupAutoScroll();">
+        <img id="back_button" src="images/back_ios_48.png" onclick="nextSlide(Direction.LEFT);setupAutoScroll();">
     </div>
     <div class="floatlabel verticalCenter" style="right:0px;">
-        <img id="next_button" src="https://raw.githubusercontent.com/meekimobile/webgadgets/master/images/next_ios_48.png" onclick="nextSlide(Direction.RIGHT);setupAutoScroll();">
+        <img id="next_button" src="images/next_ios_48.png" onclick="nextSlide(Direction.RIGHT);setupAutoScroll();">
     </div>
     <div id="debug" class="debug"></div>
 </div>
@@ -18,37 +18,3 @@
 <!-- JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="js/image_slider.js"></script>
-<script>
-    $('#debug').html('script started.');
-
-    var prefs = new Prefs(window.location.search);
-    var currentSlide = 0;
-    var slideCount = 0;
-    var Direction = {
-        LEFT: -1,
-        RIGHT: 1
-    };
-    var startMouseX = -1;
-    var startScrollLeft = 0;
-    var dx;
-    var autoScrollTimer;
-
-    $(function () {
-        // Parse prefs.
-        $('#debug').html('parsing prefs.');
-
-        // Toggle debugging.
-        if (!prefs.getBool('debug')) {
-            $('#debug').hide();
-        }
-
-        $('#carousel').show();
-        populateItems();
-        setupAutoScroll();
-
-        $(window).on('resize', function () {
-            resizeItems();
-            setupAutoScroll();
-        });
-    }); // Document is ready.
-</script>

@@ -224,3 +224,34 @@ function setupAutoScroll() {
         autoScrollTimer = window.setInterval(function () { nextSlide(Direction.RIGHT, 500); }, autoScrollDuration * 1000);
     }
 }
+
+$('#debug').html('script started.');
+
+var prefs = new Prefs(window.location.search);
+var currentSlide = 0;
+var slideCount = 0;
+var Direction = {
+    LEFT: -1,
+    RIGHT: 1
+};
+var startMouseX = -1;
+var startScrollLeft = 0;
+var dx;
+var autoScrollTimer;
+
+$(function () {
+    // Toggle debugging.
+    if (!prefs.getBool('debug')) {
+        $('#debug').hide();
+    }
+
+    $('#carousel-container').width(prefs.getInt('width'));
+    $('#carousel').show();
+    populateItems();
+    setupAutoScroll();
+
+    $(window).on('resize', function () {
+        resizeItems();
+        setupAutoScroll();
+    });
+}); // Document is ready.
