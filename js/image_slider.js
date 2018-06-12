@@ -99,10 +99,10 @@ function htmlDecode(input) {
 }
 
 function autoScroll() {
-    console.log('autoScroll items.width ' + $('#items').width() + ' slider.width ' + window.innerWidth);
+    console.log('autoScroll items.width ' + $('#items').width() + ' slider.width ' + prefs.getInt('width'));
     var autoScrollDuration = parseInt(prefs.getString('autoScrollDuration'));
     var scrollLeft = $('#carousel').scrollLeft();
-    var maxScrollLeft = $('#items').width() - window.innerWidth;
+    var maxScrollLeft = $('#items').width() - prefs.getInt('width');
     var targetScrollLeft;
     if (maxScrollLeft < 0) {
         targetScrollLeft = '0px';
@@ -186,7 +186,7 @@ function populateItems() {
         var itemImg = document.createElement('img');
         itemImg.src = baseUrl + encodeURI(content);
         $(item).append(itemImg);
-        $(itemImg).width($(window).width());
+        $(itemImg).width(prefs.getInt('width'));
         $(itemImg).load(function () {
             if ($(this).height() > $('#carousel').height()) {
                 console.log('img height ' + $(this).height());
@@ -204,9 +204,9 @@ function resizeItems() {
     $('#carousel').css('scrollLeft', 0);
 
     $('#items div img').each(function () {
-        var ratio = $(window).width() / $(this).width;
+        var ratio = prefs.getInt('width') / $(this).width;
         var newHeight = $(this).height() * ratio;
-        $(this).width($(window).width());
+        $(this).width(prefs.getInt('width'));
         $(this).height(newHeight);
         if ($(this).height() > $('#carousel').height()) {
             $('#carousel').height($(this).height());
